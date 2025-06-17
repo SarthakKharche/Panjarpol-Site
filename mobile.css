@@ -251,16 +251,11 @@
     animation: glow 2s infinite alternate;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     cursor: pointer;
-    pointer-events: none;
   }
 
-  .donate-sidebar[data-i18n] {
-    margin-top: 60px;
-  }
-
-  .donate-sidebar:hover {
-    transform: scale(1.07);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  /* Hide donate button when menu is open */
+  .main-nav.active ~ .donate-sidebar {
+    display: none;
   }
 
   .bank-details {
