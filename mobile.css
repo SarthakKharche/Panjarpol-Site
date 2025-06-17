@@ -230,7 +230,7 @@
     position: fixed;
     left: 0;
     top: 40%;
-    z-index: 1000;
+    z-index: 999;
     background: url('media/Kalash-removebg-preview.png') center 30%/65% no-repeat, rgba(255, 251, 230, 0.95);
     color: #7a4a00;
     font-weight: bold;
@@ -251,6 +251,7 @@
     animation: glow 2s infinite alternate;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     cursor: pointer;
+    pointer-events: none;
   }
 
   .donate-sidebar[data-i18n] {
@@ -532,6 +533,11 @@
 
   .fadein-namaste {
     font-size: 2rem;
+  }
+
+  /* Enable pointer events when menu is closed */
+  .main-nav:not(.active) ~ .donate-sidebar {
+    pointer-events: auto;
   }
 }
 
