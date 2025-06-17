@@ -7,6 +7,7 @@
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mobile.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -17,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="site-fadein-overlay">
@@ -28,6 +30,11 @@
   <header>
     <div class="header-content">
       <div class="title-row">
+        <button class="hamburger-menu" aria-label="Toggle navigation menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
         <img src="media/elephant1.png" alt="Elephant Left" class="elephant-image">
         <h1 data-i18n="title" class="site-title">Poona Panjarpole Trust</h1>
         <img src="media/elephant2.png" alt="Elephant Right" class="elephant-image">
@@ -178,6 +185,30 @@
 <script src="chatbot.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // Hamburger menu functionality
+    const hamburger = document.querySelector('.hamburger-menu');
+    const mainNav = document.querySelector('.main-nav');
+    const body = document.body;
+
+    function toggleMenu() {
+      mainNav.classList.toggle('active');
+      if (mainNav.classList.contains('active')) {
+        body.style.overflow = 'hidden';
+      } else {
+        body.style.overflow = '';
+      }
+    }
+
+    hamburger.addEventListener('click', toggleMenu);
+
+    // Close menu when clicking the X button
+    mainNav.addEventListener('click', function(e) {
+      if (e.target === this || e.target.tagName === 'A') {
+        mainNav.classList.remove('active');
+        body.style.overflow = '';
+      }
+    });
+
     // Scroll to top button functionality
     const scrollToTopBtn = document.getElementById('scrollToTop');
     
@@ -195,6 +226,82 @@
         behavior: 'smooth'
       });
     });
+
+    // Make donate button draggable only on mobile
+    const donateBtn = document.querySelector('.donate-sidebar');
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+
+    function isMobile() {
+      return window.innerWidth <= 768;
+    }
+
+    function dragStart(e) {
+      if (!isMobile()) return;
+      
+      if (e.type === "touchstart") {
+        initialX = e.touches[0].clientX - xOffset;
+        initialY = e.touches[0].clientY - yOffset;
+      } else {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+      }
+
+      if (e.target === donateBtn) {
+        isDragging = true;
+        donateBtn.classList.add('dragging');
+      }
+    }
+
+    function dragEnd(e) {
+      if (!isMobile()) return;
+      
+      initialX = currentX;
+      initialY = currentY;
+      isDragging = false;
+      donateBtn.classList.remove('dragging');
+    }
+
+    function drag(e) {
+      if (!isMobile()) return;
+      
+      if (isDragging) {
+        e.preventDefault();
+
+        if (e.type === "touchmove") {
+          currentX = e.touches[0].clientX - initialX;
+          currentY = e.touches[0].clientY - initialY;
+        } else {
+          currentX = e.clientX - initialX;
+          currentY = e.clientY - initialY;
+        }
+
+        xOffset = currentX;
+        yOffset = currentY;
+
+        setTranslate(currentX, currentY, donateBtn);
+      }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+      el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+    }
+
+    // Only add drag event listeners on mobile
+    if (isMobile()) {
+      donateBtn.addEventListener("touchstart", dragStart, false);
+      donateBtn.addEventListener("touchend", dragEnd, false);
+      donateBtn.addEventListener("touchmove", drag, false);
+
+      donateBtn.addEventListener("mousedown", dragStart, false);
+      donateBtn.addEventListener("mouseup", dragEnd, false);
+      donateBtn.addEventListener("mousemove", drag, false);
+    }
   });
 </script>
 </body>
