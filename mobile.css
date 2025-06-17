@@ -228,62 +228,38 @@
   /* Donate section */
   .donate-sidebar {
     position: fixed;
-    left: 12px;
-    right: auto;
-    bottom: 50%;
-    transform: translateY(50%);
-    width: auto;
-    padding: 0.15em 0.3em 0.6em 0.3em;
-    font-size: 0.75em;
-    line-height: 1.1;
-    z-index: 50;
+    left: 0;
+    top: 40%;
+    z-index: 1000;
     background: url('media/Kalash-removebg-preview.png') center 30%/65% no-repeat, rgba(255, 251, 230, 0.95);
-    border-radius: 1.5em;
-    box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+    color: #7a4a00;
+    font-weight: bold;
+    border: none;
+    border-radius: 2em;
+    padding: 0.15em 0.3em 0.6em 0.3em;
+    min-width: 55px;
+    min-height: 75px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
     text-align: center;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-    min-width: 65px;
-    min-height: 85px;
+    text-shadow: 0 1px 4px #fff, 0 0 2px #fff;
+    font-size: 0.7em;
+    transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    transform-origin: left center;
-    border: none;
-    color: #7a4a00;
-    font-weight: bold;
-    cursor: move;
-    user-select: none;
-    touch-action: none;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    text-shadow: 0 1px 4px #fff, 0 0 2px #fff;
     animation: glow 2s infinite alternate;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    cursor: pointer;
   }
 
   .donate-sidebar[data-i18n] {
     margin-top: 60px;
   }
 
-  @keyframes glow {
-    from {
-      box-shadow: 0 0 5px #ffcc66, 0 0 10px #ffcc66, 0 0 15px #ffcc66;
-    }
-    to {
-      box-shadow: 0 0 10px #ffcc66, 0 0 20px #ffcc66, 0 0 30px #ffcc66;
-    }
-  }
-
   .donate-sidebar:hover {
-    transform: translateY(50%) scale(1.07);
+    transform: scale(1.07);
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-  }
-
-  .donate-sidebar.dragging {
-    opacity: 0.8;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transform: scale(1.05);
   }
 
   .bank-details {
@@ -594,11 +570,10 @@
   }
 
   .donate-sidebar {
-    left: 8px;
+    min-width: 45px;
+    min-height: 65px;
+    font-size: 0.65em;
     padding: 0.12em 0.25em 0.5em 0.25em;
-    font-size: 0.7em;
-    min-width: 60px;
-    min-height: 80px;
   }
 
   .donate-sidebar[data-i18n] {
