@@ -5,9 +5,66 @@
   const messages = document.getElementById('narayan-chat-messages');
   const chatPopup = document.querySelector('.chat-popup');
 
+  // Chat history storage
+  const CHAT_HISTORY_KEY = 'narayan_chat_history';
+
+  // Check if this is a new session
+  const isNewSession = !sessionStorage.getItem('narayan_session_started');
+  if (isNewSession) {
+    // Clear chat history for new session
+    localStorage.removeItem(CHAT_HISTORY_KEY);
+    localStorage.removeItem('narayan_language');
+    sessionStorage.setItem('narayan_session_started', 'true');
+  }
+
   // Language support
-  let narayanLang = null; // null until chosen
-  let langChosen = false;
+  let narayanLang = localStorage.getItem('narayan_language') || null;
+  let langChosen = !!narayanLang;
+  
+  // Load chat history
+  function loadChatHistory() {
+    const history = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (history) {
+      const parsedHistory = JSON.parse(history);
+      messages.innerHTML = ''; // Clear existing messages
+      parsedHistory.forEach(msg => {
+        const div = document.createElement('div');
+        div.className = `narayan-message ${msg.type}`;
+        div.innerHTML = msg.content;
+        messages.appendChild(div);
+        
+        // Reattach event listeners for language buttons
+        div.querySelectorAll('.narayan-lang-btn').forEach(btn => {
+          btn.onclick = function() {
+            setLanguage(btn.getAttribute('data-lang'), btn.innerText);
+          };
+        });
+
+        // Reattach event listeners for question buttons
+        div.querySelectorAll('.question-btn').forEach(btn => {
+          btn.onclick = function() {
+            const question = btn.getAttribute('data-question');
+            const answer = btn.getAttribute('data-answer');
+            addUserMessage(question);
+            setTimeout(() => {
+              addBotMessageWithTyping(answer);
+            }, 500);
+          };
+        });
+      });
+      messages.scrollTop = messages.scrollHeight;
+    }
+  }
+
+  // Save chat history
+  function saveChatHistory() {
+    const messageElements = messages.querySelectorAll('.narayan-message');
+    const history = Array.from(messageElements).map(el => ({
+      type: el.classList.contains('narayan-bot') ? 'narayan-bot' : 'narayan-user',
+      content: el.innerHTML
+    }));
+    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+  }
 
   const botTexts = {
     en: {
@@ -141,6 +198,8 @@
         }, 500);
       };
     });
+
+    saveChatHistory();
   }
 
   // Toggle chat window
@@ -152,7 +211,10 @@
       if (!langChosen) {
         showLanguagePrompt();
       } else {
-        showQuestions();
+        loadChatHistory();
+        if (messages.children.length === 0) {
+          showQuestions();
+        }
       }
     } else {
       chatPopup.style.display = 'block';
@@ -166,19 +228,22 @@
     div.innerText = msg;
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
+    saveChatHistory();
   }
 
   async function setLanguage(lang, label) {
     narayanLang = lang;
     langChosen = true;
+    localStorage.setItem('narayan_language', lang);
     await addBotMessageWithTyping(botTexts[narayanLang].setlang + label + '.<br>' + botTexts[narayanLang].greet);
     showQuestions();
   }
 
   // Show language selection as first message
   function showLanguagePrompt() {
-    messages.innerHTML = '';
-    addBotMessageWithTyping(botTexts.en.language);
+    if (!messages.children.length) {
+      addBotMessageWithTyping(botTexts.en.language);
+    }
   }
 
   // Show questions
@@ -192,8 +257,13 @@
     addBotMessageWithTyping(questionsHtml);
   }
 
-  // On load, always show language prompt in chat window (if opened)
+  // On load, check for existing chat history
   if (!windowEl.classList.contains('closed')) {
-    showLanguagePrompt();
+    const history = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (history) {
+      loadChatHistory();
+    } else {
+      showLanguagePrompt();
+    }
   }
 })(); 
