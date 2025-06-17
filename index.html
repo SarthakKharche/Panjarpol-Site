@@ -495,21 +495,12 @@
         donateBtn.addEventListener("mousemove", drag, false);
       }
 
-      // Check if this is the first visit and if we're on index.html
-      if (!localStorage.getItem('hasVisitedBefore') && window.location.pathname.endsWith('index.html')) {
-        // Show the overlay for first-time visitors on index.html
-        overlay.style.display = 'flex';
-        setTimeout(() => {
-          overlay.classList.add('fadeout');
-          setTimeout(() => { overlay.style.display = 'none'; }, 800);
-        }, 1500);
-        
-        // Mark that the user has visited
-        localStorage.setItem('hasVisitedBefore', 'true');
-      } else {
-        // Hide the overlay immediately for returning visitors or other pages
-        overlay.style.display = 'none';
-      }
+      // Show overlay on every page load
+      overlay.style.display = 'flex';
+      setTimeout(() => {
+        overlay.classList.add('fadeout');
+        setTimeout(() => { overlay.style.display = 'none'; }, 800);
+      }, 2000);
 
       // Scroll to top button functionality
       const scrollToTopBtn = document.getElementById('scrollToTop');
