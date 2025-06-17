@@ -390,6 +390,24 @@
     document.addEventListener('DOMContentLoaded', function() {
       const overlay = document.getElementById('site-fadein-overlay');
       
+      // Check if this is the first visit or a restart
+      const hasVisited = sessionStorage.getItem('hasVisited');
+      
+      if (!hasVisited) {
+        // Show overlay only on first visit
+        overlay.style.display = 'flex';
+        setTimeout(() => {
+          overlay.classList.add('fadeout');
+          setTimeout(() => { overlay.style.display = 'none'; }, 800);
+        }, 2000);
+        
+        // Set the flag in sessionStorage
+        sessionStorage.setItem('hasVisited', 'true');
+      } else {
+        // Hide overlay immediately if not first visit
+        overlay.style.display = 'none';
+      }
+
       // Hamburger menu functionality
       const hamburger = document.querySelector('.hamburger-menu');
       const mainNav = document.querySelector('.main-nav');
@@ -494,13 +512,6 @@
         donateBtn.addEventListener("mouseup", dragEnd, false);
         donateBtn.addEventListener("mousemove", drag, false);
       }
-
-      // Show overlay on every page load
-      overlay.style.display = 'flex';
-      setTimeout(() => {
-        overlay.classList.add('fadeout');
-        setTimeout(() => { overlay.style.display = 'none'; }, 800);
-      }, 2000);
 
       // Scroll to top button functionality
       const scrollToTopBtn = document.getElementById('scrollToTop');
