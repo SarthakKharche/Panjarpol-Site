@@ -41,9 +41,10 @@
     <span class="fadein-namaste">NAMASTE</span>
   </div>
 
+  <audio id="cowMooAudio" src="media/mixkit-cow-moo-in-the-barn-1751.wav" preload="auto"></audio>
   
-  <a href="upi://pay?pa=Mswipe.1400041924000711@kotak&pn=PoonaPanjarpoleTrust&am=10&cu=INR&tn=Donation
-" class="donate-sidebar" data-i18n="donate_now">Donate Now</a>
+  <a href="upi://pay?pa=Mswipe.1400041924000711@kotak&pn=PoonaPanjarpoleTrust&cu=INR&tn=Donation" class="donate-sidebar" data-i18n="donate_now">Donate Now</a>
+  <a href="#" class="callnow-sidebar" id="callNowBtn"><img src="media/telephone.png" alt="Call Now" style="width:96px;height:96px;object-fit:contain;display:block;margin:0 auto;"> </a>
   <header>
     <div class="header-content">
       <div class="title-row">
@@ -329,7 +330,7 @@
           <p><strong>IFSC:</strong> DCBL0000014</p>
           <p><strong>UPI ID:</strong> Mswipe.1400041924000711@kotak</p>
         </div>
-        <a href="upi://pay?pa=Mswipe.1400041924000711@kotak&pn=PoonaPanjarpoleTrust&am=10&cu=INR&tn=Donation" class="btn btn-success donate-btn">Donate Online</a>
+        <a href="upi://pay?pa=Mswipe.1400041924000711@kotak&pn=PoonaPanjarpoleTrust&cu=INR&tn=Donation" class="btn btn-success donate-btn">Donate Online</a>
       </div>
     </section>
 
@@ -382,6 +383,14 @@
       </div>
     </div>
     <div class="chat-popup">Chat with NAARAD</div>
+  </div>
+
+  <!-- Modal for desktop call info -->
+  <div id="callNowModal" class="callnow-modal" style="display:none;">
+    <div class="callnow-modal-content">
+      <span class="callnow-modal-close">&times;</span>
+      <p>Call us at <strong>8999158881</strong></p>
+    </div>
   </div>
 
   <script src="lang.js"></script>
@@ -542,6 +551,67 @@
       
       // Update page number display
       document.getElementById('current-page').textContent = currentPage;
+
+      // Call Now button functionality
+      const callNowBtn = document.getElementById('callNowBtn');
+      const callNowModal = document.getElementById('callNowModal');
+      const callNowModalClose = document.querySelector('.callnow-modal-close');
+      function isMobileDevice() {
+        return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+      }
+      callNowBtn.addEventListener('click', function(e) {
+        if (isMobileDevice()) {
+          window.location.href = 'tel:8999158881';
+        } else {
+          e.preventDefault();
+          callNowModal.style.display = 'block';
+        }
+      });
+      if (callNowModalClose) {
+        callNowModalClose.onclick = function() {
+          callNowModal.style.display = 'none';
+        };
+      }
+      window.onclick = function(event) {
+        if (event.target === callNowModal) {
+          callNowModal.style.display = 'none';
+        }
+      };
+
+      // Shake detection and play moo sound on mobile
+      (function() {
+        let lastX = null, lastY = null, lastZ = null;
+        let lastTime = 0;
+        const threshold = 15; // Adjust for sensitivity
+        const shakeTimeout = 1200; // ms
+        let lastShake = 0;
+        const audio = document.getElementById('cowMooAudio');
+
+        if (window.DeviceMotionEvent && isMobileDevice()) {
+          window.addEventListener('devicemotion', function(event) {
+            const acc = event.accelerationIncludingGravity;
+            if (!acc) return;
+            const curTime = new Date().getTime();
+            if ((curTime - lastTime) > 100) {
+              const diffTime = curTime - lastTime;
+              lastTime = curTime;
+
+              if (lastX !== null && lastY !== null && lastZ !== null) {
+                const delta = Math.abs(acc.x - lastX) + Math.abs(acc.y - lastY) + Math.abs(acc.z - lastZ);
+                if (delta > threshold && (curTime - lastShake) > shakeTimeout) {
+                  // Play the moo sound
+                  audio.currentTime = 0;
+                  audio.play();
+                  lastShake = curTime;
+                }
+              }
+              lastX = acc.x;
+              lastY = acc.y;
+              lastZ = acc.z;
+            }
+          }, false);
+        }
+      })();
     });
 
     // Page turning functions
